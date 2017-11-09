@@ -3,12 +3,14 @@ using Orleans;
 using GrainInterfaces;
 using System;
 using System.Threading;
+using Orleans.Concurrency;
 
 namespace Grains
 {
     /// <summary>
     /// Grain implementation class Grain1.
     /// </summary>
+    [Reentrant]
     public class Employee : Grain, IEmployee
     {
         private int _level;
@@ -37,11 +39,24 @@ namespace Grains
             return Task.CompletedTask;
         }
 
-        public async Task Greeting(IEmployee from, string message)
+        public async Task Greeting(GreetingData data)
         {
             //Console.WriteLine("{0} said: {1}", from.GetPrimaryKey().ToString(), message);
-            Console.WriteLine("{0} said: {1}", await from.GetName(), message);
+            //Console.WriteLine("{0} said: {1}", await from.GetName(), message);
             //return Task.CompletedTask;
+            Console.WriteLine("{0} said: {1}", data.From, data.Message);
+            if (data.Count >= 3)
+            {
+                return;
+            }
+
+            var fromGrain = GrainFactory.GetGrain<IEmployee>(data.From);
+            await fromGrain.Greeting(new GreetingData
+            {
+                From = this.GetPrimaryKey(),
+                Message = "Thanks!",
+                Count = data.Count + 1
+            });
         }
 
         public Task SetName(string name)

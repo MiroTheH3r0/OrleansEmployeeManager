@@ -25,8 +25,13 @@ namespace Grains
         {
             _reports.Add(employee);
             await employee.SetManager(this);
-            await employee.Greeting(_me, "Welcome to my team!");
+            //await employee.Greeting(_me, "Welcome to my team!");
             //return Task.CompletedTask;
+            await employee.Greeting(new GreetingData
+            {
+                From = this.GetPrimaryKey(),
+                Message = "Welcome to my team!"
+            });
         }
 
         public Task<IEmployee> AsEmployee()
