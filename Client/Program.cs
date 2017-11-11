@@ -27,6 +27,7 @@ namespace Client
                     GrainClient.Initialize(clientConfig);
                     Console.WriteLine("Connected to silo!");
 
+                    /*
                     var grainFactory = GrainClient.GrainFactory;
                     var e0 = grainFactory.GetGrain<IEmployee>(Guid.NewGuid());
                     var e1 = grainFactory.GetGrain<IEmployee>(Guid.NewGuid());
@@ -52,6 +53,11 @@ namespace Client
                     m1.AddDirectReport(e3).Wait();
 
                     m1.AddDirectReport(e4).Wait();
+                    */
+
+                    var grain = GrainClient.GrainFactory.GetGrain<IStockGrain>("MSFT");
+                    var price = grain.GetPrice().Result;
+                    Console.WriteLine(price);
 
                     Console.ReadLine();
                     break;
